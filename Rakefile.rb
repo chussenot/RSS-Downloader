@@ -1,13 +1,21 @@
 require File.expand_path('feed_entry', __dir__)
 require 'active_record'
 require 'fileutils'
+require 'pry'
+
+ActiveRecord::Base.logger = Logger.new(STDERR)
+
+ActiveRecord::Base.establish_connection(
+    adapter:  'sqlite3',
+    #dbfile:   ':memory:'
+    database: 'db/epub.db'
+)
 
 namespace :db do # rubocop:todo Metrics/BlockLength
   desc 'migrate your database'
   task :migrate do
-    ActiveRecord::Migrator.migrate(
-      'db/migrate',
-      ENV['VERSION'] ? ENV['VERSION'].to_i : nil
+    ActiveRecord::Migration.migrate(
+      'db/migrate'
     )
   end
 
